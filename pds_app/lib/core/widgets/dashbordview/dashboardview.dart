@@ -121,8 +121,8 @@ class DashboardScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: _buildStatsCard(
-                    title: 'TOTAL ACTIVE HOURS',
-                    value: '45hr',
+                    title: 'TOTAL ATTENDANCE',
+                    value: '0',
                     icon: Icons.trending_up,
                     iconColor: const Color(0xFF16A34A),
                     iconBgColor: const Color(0xFFDCFCE7),

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:pds_app/features/authentication/screens/login.dart';
 
 class PermissionPage extends StatefulWidget {
   const PermissionPage({super.key});
@@ -34,10 +37,7 @@ class _PermissionPageState extends State<PermissionPage> {
   }
 
   void _navigateToLoginPage() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const LoginPage()),
-    );
+    Get.to(() => const LoginPage());
   }
 
   void _showPermissionDeniedDialog() {
@@ -75,15 +75,15 @@ class _PermissionPageState extends State<PermissionPage> {
   }
 }
 
-// Dummy Login Page for demonstration
-class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+// // Dummy Login Page for demonstration
+// class LoginPage extends StatelessWidget {
+//   const LoginPage({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Login Page')),
-      body: const Center(child: Text('This is the Login Page')),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: const Text('Login Page')),
+//       body: const Center(child: Text('This is the Login Page')),
+//     );
+//   }
+// }

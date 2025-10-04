@@ -56,10 +56,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pds_app/core/widgets/Attandence/AttandanceView.dart';
 
 import 'package:pds_app/core/widgets/Location_Get&Finde_Mock/locationservice.dart';
 import 'package:pds_app/core/widgets/Ticket.dart';
-import 'package:pds_app/core/widgets/attendance.dart';
+// import 'package:pds_app/core/widgets/attendance.dart';
 import 'package:pds_app/core/widgets/QR/Scannerdart.dart';
 
 class MyDrawer extends StatelessWidget {
@@ -90,6 +91,7 @@ class MyDrawer extends StatelessWidget {
           ),
 
           // Ticket Page
+          // Ticket Page
           _buildDrawerItem(
             icon: Icons.confirmation_number,
             text: "Ticket Punch",
@@ -98,7 +100,7 @@ class MyDrawer extends StatelessWidget {
           _buildDrawerItem(
             icon: Icons.access_time,
             text: "Attendance",
-            onTap: () => Get.to(() => const AttendancePage()),
+            onTap: () => Get.to(() => const AttendanceTrackingScreen()),
           ),
           _buildDrawerItem(
             icon: Icons.qr_code_scanner,
@@ -110,7 +112,6 @@ class MyDrawer extends StatelessWidget {
             text: "Live Location",
             onTap: () => Get.to(() => const LiveLocationWidget()),
           ),
-
           const Spacer(),
           _buildDrawerItem(
             icon: Icons.logout,
