@@ -56,12 +56,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pds_app/core/widgets/Attandence/AttandanceView.dart';
+import 'package:pds_app/Widgets/Attandence/AttandanceView.dart';
 
-import 'package:pds_app/core/widgets/Location_Get&Finde_Mock/locationservice.dart';
-import 'package:pds_app/core/widgets/Ticket.dart';
+// import 'package:pds_app/core/widgets/Location_Get&Finde_Mock/locationservice.dart';
+import 'package:pds_app/Widgets/Ticket.dart';
 // import 'package:pds_app/core/widgets/attendance.dart';
-import 'package:pds_app/core/widgets/QR/Scannerdart.dart';
+import 'package:pds_app/Widgets/QR/Scannerdart.dart';
+// import 'package:pds_app/core/widgets/QR/Scannerdart.dart';
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({super.key});
@@ -100,18 +101,18 @@ class MyDrawer extends StatelessWidget {
           _buildDrawerItem(
             icon: Icons.access_time,
             text: "Attendance",
-            onTap: () => Get.to(() => const AttendanceTrackingScreen()),
+            onTap: () => Get.to(() => AttendanceTrackingScreen()),
           ),
           _buildDrawerItem(
             icon: Icons.qr_code_scanner,
             text: "QR Scanner",
             onTap: () => Get.to(() => QRCodeScanner()),
           ),
-          _buildDrawerItem(
-            icon: Icons.location_on,
-            text: "Live Location",
-            onTap: () => Get.to(() => const LiveLocationWidget()),
-          ),
+          // _buildDrawerItem(
+          //   icon: Icons.location_on,
+          //   text: "Live Location",
+          //   onTap: () => Get.to(() => LiveLocationWidget()),
+          // ),
           const Spacer(),
           _buildDrawerItem(
             icon: Icons.logout,

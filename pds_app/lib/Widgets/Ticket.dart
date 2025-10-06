@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/route_manager.dart';
-import 'package:pds_app/core/widgets/QR/Scannerdart.dart';
 
 class CreateTicketPage extends StatefulWidget {
   const CreateTicketPage({super.key});
@@ -210,7 +206,6 @@ class _CreateTicketPageState extends State<CreateTicketPage> {
                 ),
               );
             }
-            Get.to(() => QRCodeScanner());
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(255, 29, 53, 87),

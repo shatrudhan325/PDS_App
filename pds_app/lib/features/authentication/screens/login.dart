@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 // import 'package:pds_app/core/widgets/dashbordview/dashboard.dart';
-import 'package:pds_app/core/widgets/dashbordview/dashboardview.dart';
+import 'package:pds_app/Widgets/dashbordview/dashboardview.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});

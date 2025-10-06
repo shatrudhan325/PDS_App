@@ -1,7 +1,9 @@
+//This code is currently not in use, but may be used in future for better code management
+
 import 'package:flutter/material.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:pds_app/core/widgets/Location_Get&Finde_Mock/locationservice.dart';
+import 'package:pds_app/Widgets/Location_Get&Finde_Mock/locationservice.dart';
 
 class AttendancePage extends StatefulWidget {
   const AttendancePage({super.key});

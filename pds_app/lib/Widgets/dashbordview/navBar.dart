@@ -1,3 +1,4 @@
+//This cde is currenty not in used, but may be used in future for better code managment
 import 'package:flutter/material.dart';
 
 class NavBar extends StatelessWidget {
