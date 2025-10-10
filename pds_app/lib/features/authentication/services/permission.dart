@@ -6,7 +6,11 @@ import 'package:pds_app/features/authentication/screens/login.dart';
 
 class PermissionPage extends StatefulWidget {
   const PermissionPage({super.key});
-
+  //Updated Code
+  //  Future<Widget> _getStartScreen() async {
+  //     final isLoggedIn = await AuthService.isLoggedIn();
+  //     return isLoggedIn ? const DashboardScreen() : const LoginPage();
+  //   }
   @override
   State<PermissionPage> createState() => _PermissionPageState();
 }
@@ -60,6 +64,21 @@ class _PermissionPageState extends State<PermissionPage> {
 
   @override
   Widget build(BuildContext context) {
+    //Updated Code
+    // return GetMaterialApp(
+    //   debugShowCheckedModeBanner: false,
+    //   home: FutureBuilder<Widget>(
+    //     future: _getStartScreen(),
+    //     builder: (context, snapshot) {
+    //       if (snapshot.connectionState == ConnectionState.waiting) {
+    //         return const Scaffold(
+    //           body: Center(child: CircularProgressIndicator()),
+    //         );
+    //       }
+    //       return snapshot.data ?? const LoginPage();
+    //     },
+    //   ),
+    // );
     return const Scaffold(
       body: Center(
         child: Column(

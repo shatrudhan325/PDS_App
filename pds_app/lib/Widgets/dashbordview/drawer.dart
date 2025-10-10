@@ -63,9 +63,16 @@ import 'package:pds_app/Widgets/Ticket.dart';
 // import 'package:pds_app/core/widgets/attendance.dart';
 import 'package:pds_app/Widgets/QR/Scannerdart.dart';
 // import 'package:pds_app/core/widgets/QR/Scannerdart.dart';
+// import 'package:pds_app/features/authentication/screens/login.dart';
+// import 'package:pds_app/features/authentication/services/auth.dart';
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({super.key});
+  //Updated Code
+  // Future<void> logout() async {
+  //   await AuthService.logout();
+  //   Get.offAll(() => const LoginPage());
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -114,13 +121,7 @@ class MyDrawer extends StatelessWidget {
           //   onTap: () => Get.to(() => LiveLocationWidget()),
           // ),
           const Spacer(),
-          _buildDrawerItem(
-            icon: Icons.logout,
-            text: "Logout",
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
+          _buildDrawerItem(icon: Icons.logout, text: "Logout", onTap: () {}),
         ],
       ),
     );

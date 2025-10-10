@@ -63,3 +63,60 @@ class LoginPage {
     );
   }
 }
+// //Updated Code:
+// import 'dart:convert';
+// import 'package:http/http.dart' as http;
+// import 'package:shared_preferences/shared_preferences.dart';
+
+// class AuthService {
+//   static const String _baseUrl = 'https://dummyjson.com/auth/login';
+//   static const String _tokenKey = 'auth_token';
+
+//   /// ✅ Login API + save token
+//   static Future<Map<String, dynamic>?> login(
+//     String username,
+//     String password,
+//   ) async {
+//     try {
+//       final response = await http.post(
+//         Uri.parse(_baseUrl),
+//         headers: {'Content-Type': 'application/json'},
+//         body: jsonEncode({
+//           'username': username.trim(),
+//           'password': password.trim(),
+//         }),
+//       );
+
+//       if (response.statusCode == 200) {
+//         final data = jsonDecode(response.body);
+//         final token = data['token'];
+//         if (token != null) {
+//           final prefs = await SharedPreferences.getInstance();
+//           await prefs.setString(_tokenKey, token);
+//           print('✅ Token saved: $token');
+//         }
+//         return data;
+//       } else {
+//         print('❌ Login failed: ${response.statusCode} ${response.body}');
+//         return null;
+//       }
+//     } catch (e) {
+//       print('⚠️ Error during login: $e');
+//       return null;
+//     }
+//   }
+
+//   /// ✅ Check if token already saved (auto-login)
+//   static Future<bool> isLoggedIn() async {
+//     final prefs = await SharedPreferences.getInstance();
+//     final token = prefs.getString(_tokenKey);
+//     return token != null && token.isNotEmpty;
+//   }
+
+//   /// ✅ Logout and clear token
+//   static Future<void> logout() async {
+//     final prefs = await SharedPreferences.getInstance();
+//     await prefs.remove(_tokenKey);
+//     print('🚪 Token removed');
+//   }
+// }

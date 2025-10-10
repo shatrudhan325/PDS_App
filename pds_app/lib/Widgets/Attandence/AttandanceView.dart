@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/get_navigation.dart';
 import 'package:pds_app/Models/attandence.dart';
+import 'package:pds_app/Widgets/Attandence/AttandencePastRecord.dart';
 import 'package:pds_app/Widgets/Location_Get&Finde_Mock/attandenceLocation.dart';
 import 'Attandance_info_card.dart';
 import 'log_entry_items.dart';
@@ -25,6 +27,7 @@ class AttendanceTrackingScreen extends StatefulWidget {
 
 class _AttendanceTrackingScreenState extends State<AttendanceTrackingScreen> {
   AttendanceRecord _attendanceRecord = AttendanceRecord();
+  bool _isFakeLocation = false;
   String _elapsedTime = '0 hours, 0 minutes';
   Timer? _timer;
 
@@ -53,6 +56,16 @@ class _AttendanceTrackingScreenState extends State<AttendanceTrackingScreen> {
 
   /// Handle check-in action
   void _handleCheckIn() {
+    if (_isFakeLocation) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('❌ Check-in not allowed — Fake GPS detected!'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return; // 🚫 Stop check-in
+    }
+
     setState(() {
       _attendanceRecord = AttendanceRecord(
         checkInTime: DateTime.now(),
@@ -151,7 +164,13 @@ class _AttendanceTrackingScreenState extends State<AttendanceTrackingScreen> {
                     ),
                   ],
                 ),
-                child: LiveLocationWidgets(),
+                child: LiveLocationWidgets(
+                  onLocationCheck: (isFake) {
+                    setState(() {
+                      _isFakeLocation = isFake;
+                    });
+                  },
+                ),
               ),
 
               const SizedBox(height: 16),
@@ -193,6 +212,7 @@ class _AttendanceTrackingScreenState extends State<AttendanceTrackingScreen> {
                 child: TextButton(
                   onPressed: () {
                     debugPrint('View Past Records clicked');
+                    Get.to(() => const PastRecordsScreen());
                   },
                   style: TextButton.styleFrom(
                     padding: const EdgeInsets.symmetric(

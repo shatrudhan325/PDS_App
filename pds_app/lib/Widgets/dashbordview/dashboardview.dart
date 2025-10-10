@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pds_app/Widgets/Attandence/AttandencePastRecord.dart';
 // import 'package:get/get_core/src/get_main.dart';
 import 'package:pds_app/Widgets/Location_Get&Finde_Mock/locationservice.dart';
 import 'package:pds_app/Widgets/dashbordview/drawer.dart';
@@ -120,12 +121,17 @@ class DashboardScreen extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: _buildStatsCard(
-                    title: 'TOTAL ATTENDANCE',
-                    value: '0',
-                    icon: Icons.trending_up,
-                    iconColor: const Color(0xFF16A34A),
-                    iconBgColor: const Color(0xFFDCFCE7),
+                  child: GestureDetector(
+                    onTap: () {
+                      Get.to(() => const PastRecordsScreen());
+                    },
+                    child: _buildStatsCard(
+                      title: 'TOTAL ATTENDANCE',
+                      value: '0',
+                      icon: Icons.trending_up,
+                      iconColor: const Color(0xFF16A34A),
+                      iconBgColor: const Color(0xFFDCFCE7),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),

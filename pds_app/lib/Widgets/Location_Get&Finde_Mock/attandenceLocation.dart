@@ -4,7 +4,8 @@ import 'package:geocoding/geocoding.dart';
 import 'package:detect_fake_location/detect_fake_location.dart';
 
 class LiveLocationWidgets extends StatefulWidget {
-  const LiveLocationWidgets({super.key});
+  final Function(bool isFake)? onLocationCheck;
+  const LiveLocationWidgets({super.key, this.onLocationCheck});
 
   @override
   State<LiveLocationWidgets> createState() => _LiveLocationWidgetState();
@@ -85,10 +86,12 @@ class _LiveLocationWidgetState extends State<LiveLocationWidgets> {
       setState(() {
         isFakeLocation = isFakeGPSLocation;
       });
+      widget.onLocationCheck?.call(isFakeLocation);
     } catch (_) {
       setState(() {
         isFakeLocation = false;
       });
+      widget.onLocationCheck?.call(false);
     }
   }
 
