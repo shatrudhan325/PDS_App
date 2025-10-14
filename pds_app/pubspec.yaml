@@ -50,7 +50,7 @@ dependencies:
   get: ^4.7.2
   simple_barcode_scanner: ^0.3.0
   qr_code_scanner_plus: ^2.0.12
- 
+  jwt_decoder: ^2.0.1
  
   
 
