@@ -54,7 +54,7 @@ class ProfileSectionApp extends StatelessWidget {
           email: 'blockengineer@email.com',
           about:
               'Product Manager at Trinetra with 5+ years of experience in mobile app development and user experience design.',
-          imageUrl: 'pds_app/assets/images/i.avif',
+          imageUrl: 'pds_app/assets/images/i.avif56',
         ),
         onSave: (profile) {
           print('Profile saved: ${profile.toJson()}');

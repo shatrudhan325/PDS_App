@@ -97,9 +97,6 @@ class MyDrawer extends StatelessWidget {
               ),
             ),
           ),
-
-          // Ticket Page
-          // Ticket Page
           _buildDrawerItem(
             icon: Icons.confirmation_number,
             text: "Ticket Punch",
@@ -121,6 +118,7 @@ class MyDrawer extends StatelessWidget {
           //   onTap: () => Get.to(() => LiveLocationWidget()),
           // ),
           const Spacer(),
+          _buildDrawerItem(icon: Icons.settings, text: "Setting", onTap: () {}),
           _buildDrawerItem(icon: Icons.logout, text: "Logout", onTap: () {}),
         ],
       ),

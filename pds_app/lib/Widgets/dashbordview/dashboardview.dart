@@ -127,10 +127,10 @@ class DashboardScreen extends StatelessWidget {
                     },
                     child: _buildStatsCard(
                       title: 'TOTAL ATTENDANCE',
-                      value: '0',
+                      value: "0",
                       icon: Icons.trending_up,
                       iconColor: const Color(0xFF16A34A),
-                      iconBgColor: const Color(0xFFDCFCE7),
+                      iconBgColor: const Color.fromARGB(255, 226, 231, 228),
                     ),
                   ),
                 ),
@@ -223,7 +223,12 @@ class DashboardScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: const Color.fromARGB(
+                          255,
+                          212,
+                          210,
+                          210,
+                        ).withOpacity(0.05),
                         blurRadius: 10,
                         offset: const Offset(0, 2),
                       ),

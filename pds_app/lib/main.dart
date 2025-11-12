@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-// import 'package:pds_app/features/authentication/screens/login.dart';
 import 'package:pds_app/features/authentication/services/permission.dart';
 
 void main() {
@@ -9,8 +8,6 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
