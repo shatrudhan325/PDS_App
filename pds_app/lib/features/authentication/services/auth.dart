@@ -180,20 +180,20 @@ class LoginPage {
 //           // --- JWT DECODER INTEGRATION ---
 //           if (JwtDecoder.is!='null(token)') {
 //             Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-//             print('🔑 Decoded Token User ID: ${decodedToken['id']}');
-//             print('🔑 Token Expires At: ${JwtDecoder.get='expiration(token)');}');
+//             print('Decoded Token User ID: ${decodedToken['id']}');
+//             print('Token Expires At: ${JwtDecoder.get='expiration(token)');}');
 //           }
 //           // -------------------------------
           
-//           print('✅ Token saved: $token');
+//           print(' Token saved: $token');
 //         }
 //         return data;
 //       } else {
-//         print('❌ Login failed: ${response.statusCode} ${response.body}');
+//         print('Login failed: ${response.statusCode} ${response.body}');
 //         return null;
 //       }
 //     } catch (e) {
-//       print('⚠️ Error during login: $e');
+//       print(' Error during login: $e');
 //       return null;
 //     }
 //   }
@@ -204,7 +204,7 @@ class LoginPage {
 //     return prefs.getString(_tokenKey);
 //   }
 
-//   /// ✅ Check if token already saved and if it's expired
+//   /// Check if token already saved and if it's expired
 //   static Future<bool> isLoggedIn() async {
 //     final token = await getToken();
     
@@ -214,7 +214,7 @@ class LoginPage {
     
 //     // --- JWT DECODER INTEGRATION ---
 //     if (JwtDecoder.is='expired(token)') {
-//       print('🔒 Token found, but it is EXPIRED. Forcing logout.');
+//       print('Token found, but it is EXPIRED. Forcing logout.');
 //       await logout(); // Clear expired token
 //       return false;
 //     }
@@ -223,7 +223,7 @@ class LoginPage {
 //     return true; // Token found and is valid/not expired
 //   }
 
-//   /// ✅ Logout and clear token
+//   /// Logout and clear token
 //   static Future<void> logout() async {
 //     final prefs = await SharedPreferences.getInstance();
 //     await prefs.remove(_tokenKey);
@@ -244,8 +244,6 @@ class LoginPage {
 // import 'package:package_info_plus/package_info_plus.dart'; 
 
 // class AuthService {
-//   // 🟢 CHANGE 1: Update URL to point to your local Spring Boot server
-//   // Use 10.0.2.2 for Android Emulator, or localhost for iOS Simulator/Web
 //   static const String _baseUrl = 'http://10.0.2.2:8080/auth/login'; 
 //   static const String _tokenKey = 'auth_token';
 
@@ -313,8 +311,8 @@ class LoginPage {
 //         return {'error': errorMessage}; 
 //       }
 //     } catch (e) {
-//       // 🔴 CHANGE 3: Improved Network Error Handling
-//       print('⚠️ Error during login: $e');
+//       // CHANGE 3: Improved Network Error Handling
+//       print(' Error during login: $e');
 //       // Return a Map with a specific network error message
 //       return {'error': 'Cannot connect to the server. Check your connection or API URL.'}; 
 //     }

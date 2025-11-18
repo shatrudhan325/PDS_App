@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pds_app/features/authentication/services/permission.dart';
+//import 'package:pds_app/features/authentication/services/permission.dart';
+import 'package:pds_app/features/authentication/screens/login.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,11 +15,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'PDS App',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: PermissionPage(),
+      home: LoginPage(), //PermissionPage(),
     );
   }
 }
-
+//yaha se
 // class MyHomePage extends StatefulWidget {
 //   const MyHomePage({super.key, required this.title});
 

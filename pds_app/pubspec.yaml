@@ -51,6 +51,11 @@ dependencies:
   simple_barcode_scanner: ^0.3.0
   qr_code_scanner_plus: ^2.0.14
   jwt_decoder: ^2.0.1
+  flutter_map: ^8.2.2
+  latlong2: ^0.9.0
+  flutter_map_cache: ^2.0.0
+  http_cache_file_store: ^2.0.0
+ 
  
   
 
@@ -58,7 +63,7 @@ dependencies:
  
   toggle_switch: ^2.3.0
   getwidget: ^7.0.0
-  flutter_svg: ^2.2.1
+  flutter_svg: ^2.2.2
   image_picker: ^1.2.0
 
 

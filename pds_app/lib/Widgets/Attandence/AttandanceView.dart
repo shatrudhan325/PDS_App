@@ -307,11 +307,54 @@ class _AttendanceTrackingScreenState extends State<AttendanceTrackingScreen> {
             const SizedBox(height: 24),
 
             /// Action Button
+            // SizedBox(
+            //   width: double.infinity,
+            //   height: 56,
+            //   child: ElevatedButton(
+            //     onPressed: isCheckedIn ? _handleCheckOut : _handleCheckIn,
+            //     style: ElevatedButton.styleFrom(
+            //       backgroundColor: isCheckedIn
+            //           ? const Color(0xFFDC3545)
+            //           : Colors.white,
+            //       foregroundColor: isCheckedIn
+            //           ? Colors.white
+            //           : const Color(0xFF007BFF),
+            //       elevation: 4,
+            //       shape: RoundedRectangleBorder(
+            //         borderRadius: BorderRadius.circular(8),
+            //       ),
+            //     ),
+            //     child: Text(
+            //       isCheckedIn ? 'CHECK OUT' : 'CHECK IN',
+            //       style: const TextStyle(
+            //         fontSize: 18,
+            //         fontWeight: FontWeight.w500,
+            //       ),
+            //     ),
+            //   ),
+            // ),
             SizedBox(
               width: double.infinity,
               height: 56,
               child: ElevatedButton(
-                onPressed: isCheckedIn ? _handleCheckOut : _handleCheckIn,
+                onPressed: isCheckedIn
+                    ? () {
+                        Get.defaultDialog(
+                          title: 'Confirm Check Out',
+                          middleText: 'Are you sure you want to CHECK OUT?',
+                          barrierDismissible: false,
+                          textCancel: 'Cancel',
+                          textConfirm: 'Yes, Check Out',
+                          onCancel: () {},
+                          onConfirm: () {
+                            Get.back(); // Close dialog
+                            _handleCheckOut(); // Execute checkout
+                          },
+                          buttonColor: const Color(0xFFDC3545),
+                          confirmTextColor: Colors.white,
+                        );
+                      }
+                    : _handleCheckIn,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isCheckedIn
                       ? const Color(0xFFDC3545)
