@@ -51,13 +51,14 @@ dependencies:
   simple_barcode_scanner: ^0.3.0
   qr_code_scanner_plus: ^2.0.14
   jwt_decoder: ^2.0.1
+  #Yaha Se 4 number map ka dependency hai so if map will be deleted the remove dependency
   flutter_map: ^8.2.2
   latlong2: ^0.9.0
   flutter_map_cache: ^2.0.0
   http_cache_file_store: ^2.0.0
- 
- 
+  mobile_number: ^3.0.0
   
+  sim_card_code: ^0.1.0
 
   # antifakegps: ^0.0.2
  
@@ -65,6 +66,8 @@ dependencies:
   getwidget: ^7.0.0
   flutter_svg: ^2.2.2
   image_picker: ^1.2.0
+  get_storage: ^2.0.3
+  android_id: ^0.5.0
 
 
 

@@ -401,10 +401,10 @@ class MyDrawer extends StatelessWidget {
                   children: [
                     Expanded(
                       child: _buildResponsiveTile(
-                        icon: Icons.settings,
-                        text: 'Setting',
+                        icon: Icons.dark_mode,
+                        text: 'Mode',
                         onTap: () {
-                          Navigator.of(context).pop();
+                          // Navigator.of(context).pop();
                           c.toggleTheme();
                         },
                       ),
