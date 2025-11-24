@@ -400,6 +400,7 @@ import 'package:pds_app/Widgets/Attandence/AttandencePastRecord.dart';
 import 'package:pds_app/Widgets/Location_Get&Finde_Mock/map_view.dart';
 import 'package:pds_app/Widgets/dashbordview/drawer.dart';
 import 'package:pds_app/features/user profile/profile_c.dart';
+//import 'package:pds_app/Widgets/Location_Get&Finde_Mock/locationservice.dart';
 
 class DashboardController extends GetxController {
   // device width reactive
@@ -590,7 +591,6 @@ class DashboardScreen extends StatelessWidget {
                   ),
 
                   SizedBox(height: 24 * _scale(controller)),
-
                   Text(
                     'Location',
                     style: TextStyle(

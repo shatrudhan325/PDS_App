@@ -4,9 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
-/// =================================================================
-///                  THEME CONTROLLER  (GETX)
-/// =================================================================
 class ThemeController extends GetxController {
   static const String _storageKey = 'isDarkMode';
   final _box = GetStorage();
@@ -30,9 +27,6 @@ class ThemeController extends GetxController {
   }
 }
 
-/// =================================================================
-///                        LIGHT THEME
-/// =================================================================
 final ThemeData lightTheme = ThemeData(
   brightness: Brightness.light,
   primarySwatch: Colors.indigo,
@@ -51,9 +45,6 @@ final ThemeData lightTheme = ThemeData(
   ),
 );
 
-/// =================================================================
-///                        DARK THEME
-/// =================================================================
 final ThemeData darkTheme = ThemeData(
   brightness: Brightness.dark,
   primarySwatch: Colors.orange,
