@@ -981,7 +981,7 @@
 // ///updated Code
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:pds_app/core/Services/token_store.dart'; //new
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -1145,14 +1145,14 @@ class AuthService {
       );
 
       print(response.body);
-
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final token = data['token'];
+        final token = data['accessToken'];
+        await TokenStorage.saveToken(token);
 
         if (token != null) {
           final prefs = await SharedPreferences.getInstance();
-          await prefs.setString(_tokenKey, token);
+          await prefs.setString("accessToken", token);
 
           if (!JwtDecoder.isExpired(token)) {
             final decodedToken = JwtDecoder.decode(token);
@@ -1160,7 +1160,7 @@ class AuthService {
             print('Token Expires At: ${JwtDecoder.getExpirationDate(token)}');
           }
 
-          print('Token saved: $token');
+          print('Token saved: $prefs.getString("accessToken")');
         }
         return data;
       } else {
@@ -1195,6 +1195,11 @@ class AuthService {
     final token = await getToken();
     if (token == null) return false;
     return !JwtDecoder.isExpired(token);
+  }
+
+  static Future<void> saveToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_tokenKey, token);
   }
 
   static Future<void> logout() async {

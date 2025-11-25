@@ -1656,6 +1656,7 @@ import 'package:pds_app/Widgets/Attandence/attandence.dart';
 import 'package:pds_app/Widgets/Attandence/AttandencePastRecord.dart';
 import 'package:pds_app/Widgets/Location_Get&Finde_Mock/attandenceLocation.dart';
 import 'package:pds_app/core/Services/Android_id_get.dart';
+import 'package:pds_app/core/Services/token_store.dart';
 
 import 'Attandance_info_card.dart';
 import 'log_entry_items.dart';
@@ -1836,13 +1837,14 @@ class AttendanceController extends GetxController {
         'http://192.168.29.202:8080/v1/m/attendance/mark_attendance';
 
     final String? androidId = await DeviceInfoService.getAndroidId();
+    final String? authToken = await TokenStorage.getToken();
 
     final payload = <String, dynamic>{
-      'myLatitude': loc.latitude,
-      'myLongitude': loc.longitude,
+      'myLatitude': loc.latitude.toPrecision(5),
+      'myLongitude': loc.longitude.toPrecision(5),
       'isMock': loc.isMock.toString(),
       'address': loc.address,
-      'accuracy': loc.accuracy,
+      'accuracy': loc.accuracy.toPrecision(2),
       'buildNumber': androidId,
       'type': action == 'check_in' ? 'CHECK-IN' : 'CHECK-OUT',
     };
@@ -1854,11 +1856,10 @@ class AttendanceController extends GetxController {
         Uri.parse(apiUrl),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ',
+          'Authorization': 'Bearer $authToken',
         },
         body: jsonEncode(payload),
       );
-
       if (response.statusCode == 200 || response.statusCode == 201) {
         debugPrint('Attendance saved successfully');
       } else {
