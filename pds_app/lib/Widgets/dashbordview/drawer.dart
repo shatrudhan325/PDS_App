@@ -403,6 +403,7 @@ import 'package:get/get.dart';
 import 'package:pds_app/Widgets/Attandence/AttandanceView.dart';
 import 'package:pds_app/Widgets/Ticket.dart';
 import 'package:pds_app/Widgets/QR/Scannerdart.dart';
+import 'package:pds_app/features/Tag%20Location/Tag_Location_Logic.dart';
 import 'package:pds_app/features/authentication/screens/login.dart';
 
 /// Controller for Drawer state/actions
@@ -423,7 +424,7 @@ class DrawerControllerX extends GetxController {
   void openAttendanceCheck() => Get.to(() => AttendanceTrackingScreen());
 
   /// Subsection 2: Tag Location
-  // void openTagLocation() => Get.to(() => TagLocationPage());
+  void openTagLocation() => Get.to(() => TagLocationPage());
 
   void openQRScanner() => Get.to(() => QRCodeScanner());
   void openLogout() => Get.to(() => LoginPage());
@@ -620,7 +621,7 @@ class MyDrawer extends StatelessWidget {
                   },
                 ),
 
-                // 🔽 Attendance section with sub-items
+                // Attendance section with sub-items
                 _buildAttendanceSection(context),
 
                 _buildResponsiveTile(
@@ -635,7 +636,7 @@ class MyDrawer extends StatelessWidget {
             ),
           ),
 
-          // Bottom actions (Setting, Logout) pinned to bottom
+          // Bottom actions (Mode, Logout) pinned to bottom
           Padding(
             padding: EdgeInsets.symmetric(
               horizontal: r.wp(3),
@@ -726,7 +727,7 @@ class MyDrawer extends StatelessWidget {
             ),
             onTap: () {
               Navigator.of(context).pop();
-              // c.openTagLocation();
+              c.openTagLocation();
             },
           ),
         ],
