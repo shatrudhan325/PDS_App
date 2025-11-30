@@ -59,6 +59,7 @@ dependencies:
   mobile_number: ^3.0.0
   
   sim_card_code: ^0.1.0
+  dio: ^5.9.0
 
   # antifakegps: ^0.0.2
  

@@ -501,7 +501,7 @@ class _TagLocationPageState extends State<TagLocationPage> {
               // Text('Status: $_statusMessage', textAlign: TextAlign.center),
               // const SizedBox(height: 18),
               Container(
-                padding: const EdgeInsets.all(50),
+                padding: const EdgeInsets.all(60),
                 decoration: BoxDecoration(
                   color: Colors.grey.shade100,
                   borderRadius: BorderRadius.circular(12),

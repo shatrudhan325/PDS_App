@@ -402,7 +402,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pds_app/Widgets/Attandence/AttandanceView.dart';
 import 'package:pds_app/Widgets/Ticket.dart';
-import 'package:pds_app/Widgets/QR/Scannerdart.dart';
+import 'package:pds_app/features/QR/Scannerdart.dart';
 import 'package:pds_app/features/Tag%20Location/Tag_Location_Logic.dart';
 import 'package:pds_app/features/authentication/screens/login.dart';
 

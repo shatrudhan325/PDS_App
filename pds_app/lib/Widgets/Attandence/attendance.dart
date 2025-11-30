@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:pds_app/Widgets/Location_Get&Finde_Mock/locationservice.dart';
+import 'package:pds_app/features/Location_Get&Finde_Mock/locationservice.dart';
 
 class AttendancePage extends StatefulWidget {
   const AttendancePage({super.key});

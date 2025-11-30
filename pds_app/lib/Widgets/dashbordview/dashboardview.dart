@@ -397,9 +397,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pds_app/Widgets/Attandence/AttandencePastRecord.dart';
-import 'package:pds_app/Widgets/Location_Get&Finde_Mock/map_view.dart';
+import 'package:pds_app/features/Location_Get&Finde_Mock/map_view.dart';
 import 'package:pds_app/Widgets/dashbordview/drawer.dart';
-import 'package:pds_app/features/user profile/profile_c.dart';
+import 'package:pds_app/Widgets/user%20profile/profile_c.dart';
+// import 'package:pds_app/features/authentication/services/token_Decoder.dart';
 //import 'package:pds_app/Widgets/Location_Get&Finde_Mock/locationservice.dart';
 
 class DashboardController extends GetxController {
@@ -507,7 +508,7 @@ class DashboardScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Hello, Block Engineer',
+                          'Hello Engineer',
                           style: TextStyle(
                             fontSize: 28 * _scale(controller),
                             fontWeight: FontWeight.w500,

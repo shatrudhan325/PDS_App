@@ -1,7 +1,3 @@
-// export const config = {
-//   baseURL: 'https:///'
-// }
-
 class ApiConfig {
-  static const String baseURL = 'https://myendpoint.com';
+  static const String baseUrl = 'http://192.168.29.202:8080/v1/m';
 }

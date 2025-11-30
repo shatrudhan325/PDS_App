@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pds_app/core/routeconfig/auth_Controler.dart';
 import 'package:pds_app/features/authentication/services/permission.dart';
 //import 'package:pds_app/features/authentication/screens/login.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final auth = Get.put(AuthController());
+  await auth.loadRole();
   runApp(const MyApp());
 }
 
@@ -15,7 +20,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'PDS App',
       theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(), // ThemeData(primarySwatch: Colors.blue),
+      darkTheme: ThemeData.dark(),
       home: PermissionPage(),
     );
   }
