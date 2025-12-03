@@ -203,7 +203,7 @@
 //   }
 // }
 
-////Uper wala code sahi hai tested code hai.
+////Uper wala code sahi hai tested code hai.but http wala hai niche wala code Dio wala hai.
 ///Using Dio.
 import 'dart:io';
 
@@ -214,12 +214,13 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sim_card_code/sim_card_code.dart';
 import 'package:android_id/android_id.dart';
+import 'package:pds_app/core/apiConfig/config.dart';
 
 import 'dio_client.dart';
 import 'token_store.dart';
 
 class AuthService {
-  static const String _loginUrl = 'http://192.168.29.202:8080/v1/m/auth/login';
+  // static const String _loginUrl = 'http://192.168.29.202:8080/v1/m/auth/login';
   //static const String _tokenKey = 'auth_token';
   static PackageInfo? _packageInfo;
 
@@ -340,7 +341,10 @@ class AuthService {
       print('Login request body: $body');
 
       final dio = DioClient().dio;
-      final response = await dio.post(_loginUrl, data: body);
+      final response = await dio.post(
+        '${ApiConfig.baseUrl}/auth/login',
+        data: body,
+      );
       print('response $response');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -355,8 +359,10 @@ class AuthService {
           //   final prefs = await SharedPreferences.getInstance();
           //   await prefs.setString("user_role", role);
           // }
+
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString('accessToken', token);
+
           if (refresh != null && refresh.isNotEmpty) {
             await TokenStorage.saveRefreshToken(refresh);
           }

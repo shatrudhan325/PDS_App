@@ -8,6 +8,7 @@ import 'package:pds_app/Widgets/Attandence/AttandencePastRecord.dart';
 import 'package:pds_app/features/Location_Get&Finde_Mock/attandenceLocation.dart';
 import 'package:pds_app/core/Services/Android_id_get.dart';
 import 'package:pds_app/core/Services/token_store.dart';
+import 'package:pds_app/core/apiConfig/config.dart';
 import 'Attandance_info_card.dart';
 import 'log_entry_items.dart';
 
@@ -170,7 +171,8 @@ class AttendanceController extends GetxController {
     }
 
     const String apiUrl =
-        'http://192.168.29.202:8080/v1/m/attendance/mark_attendance';
+        // 'http://192.168.29.202:8080/v1/m/attendance/mark_attendance';
+        '${ApiConfig.baseUrl}/attendance/mark_attendance';
 
     final String? androidId = await DeviceInfoService.getAndroidId();
     final String? authToken = await TokenStorage.getToken();
@@ -209,6 +211,7 @@ class AttendanceController extends GetxController {
         );
       }
     } catch (e) {
+      print('inside error block');
       debugPrint('Attendance API error: $e');
       Get.snackbar(
         'Network error',
@@ -587,3 +590,12 @@ class AttendanceTrackingScreen extends StatelessWidget {
     );
   }
 }
+
+// class UserAttendanceLogCache {
+//   static final Map<String, dynamic> userAttendanceLog = {
+//     'checkedIn': null,
+//     'checkInTime': null,
+//     'checkedOut': null,
+//     'checkedOutTime': null,
+//   };
+// }
