@@ -401,6 +401,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pds_app/Widgets/Attandence/AttandanceView.dart';
+import 'package:pds_app/Widgets/Leave_Screen&Login/Leave_Approved_Screen.dart';
+import 'package:pds_app/Widgets/Leave_Screen&Login/Leave_Request_Screen.dart';
 import 'package:pds_app/Widgets/Ticket.dart';
 import 'package:pds_app/features/QR/Scannerdart.dart';
 import 'package:pds_app/features/Tag%20Location/Tag_Location_Logic.dart';
@@ -410,7 +412,7 @@ import 'package:pds_app/features/authentication/screens/login.dart';
 class DrawerControllerX extends GetxController {
   final title = 'Dashboard Menu'.obs;
   final subtitle = 'Welcome to your panel'.obs;
-  final bgImagePath = 'assets/images/trinetra web logo.png'.obs;
+  final bgImagePath = 'assets/images/Trinetra Inhenced logo.png'.obs;
 
   /// Theme toggle (example)
   void toggleTheme() {
@@ -425,6 +427,10 @@ class DrawerControllerX extends GetxController {
 
   /// Subsection 2: Tag Location
   void openTagLocation() => Get.to(() => TagLocationPage());
+
+  void openLeaveRequestForm() => Get.to(() => LeaveRequestPage());
+
+  void openLeaveApprovelScreen() => Get.to(() => MyLeavesScreen(userId: 1));
 
   void openQRScanner() => Get.to(() => QRCodeScanner());
   void openLogout() => Get.to(() => LoginPage());
@@ -445,8 +451,8 @@ class R {
     return R._(Get.width, Get.height);
   }
 
-  double wp(double percent) => w * percent / 100; // width percentage
-  double hp(double percent) => h * percent / 100; // height percentage
+  double wp(double percent) => w * percent / 100;
+  double hp(double percent) => h * percent / 100;
 
   bool get isTablet => w >= 600;
   double scaledFont(double base) => isTablet ? base * 1.25 : base;
@@ -728,6 +734,39 @@ class MyDrawer extends StatelessWidget {
             onTap: () {
               Navigator.of(context).pop();
               c.openTagLocation();
+            },
+          ),
+          ListTile(
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: r.wp(2),
+              vertical: r.hp(0.4),
+            ),
+            leading: const Icon(Icons.time_to_leave, color: Colors.blue),
+            title: Text(
+              'Leave Request',
+              style: TextStyle(fontSize: r.isTablet ? 16 : 14),
+            ),
+            onTap: () {
+              Navigator.of(context).pop();
+              c.openLeaveRequestForm();
+            },
+          ),
+          ListTile(
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: r.wp(2),
+              vertical: r.hp(0.4),
+            ),
+            leading: const Icon(
+              Icons.leave_bags_at_home_sharp,
+              color: Colors.blue,
+            ),
+            title: Text(
+              'Leave Status',
+              style: TextStyle(fontSize: r.isTablet ? 16 : 14),
+            ),
+            onTap: () {
+              Navigator.of(context).pop();
+              c.openLeaveApprovelScreen();
             },
           ),
         ],

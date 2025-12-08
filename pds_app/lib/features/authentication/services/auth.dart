@@ -1,20 +1,22 @@
-// import 'dart:convert';
+////Uper wala code sahi hai tested code hai.but http wala hai niche wala code Dio wala hai.
+///Using Dio.
 // import 'dart:io';
-// import 'package:pds_app/core/Services/token_store.dart';
-// import 'package:http/http.dart' as http;
-// import 'package:shared_preferences/shared_preferences.dart';
+
+// import 'package:dio/dio.dart';
 // import 'package:jwt_decoder/jwt_decoder.dart';
 // import 'package:package_info_plus/package_info_plus.dart';
-// import 'package:sim_card_code/sim_card_code.dart';
 // import 'package:permission_handler/permission_handler.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:sim_card_code/sim_card_code.dart';
 // import 'package:android_id/android_id.dart';
+// import 'package:pds_app/core/apiConfig/config.dart';
+
+// import 'dio_client.dart';
+// import 'token_store.dart';
 
 // class AuthService {
-//   static const String _baseUrl = 'http://192.168.29.202:8080/v1/m/auth/login';
-//   static const String _tokenKey = 'auth_token';
-//   static const String _androidIdKey = 'android_id';
-
 //   static PackageInfo? _packageInfo;
+
 //   static Future<void> _loadPackageInfo() async {
 //     if (_packageInfo == null) {
 //       _packageInfo = await PackageInfo.fromPlatform();
@@ -28,10 +30,11 @@
 //     }
 //     return cleaned;
 //   }
+
 //   static Future<String?> _getAndroidId() async {
 //     try {
 //       final prefs = await SharedPreferences.getInstance();
-//       final cached = prefs.getString(_androidIdKey);
+//       final cached = prefs.getString('android_id');
 //       if (cached != null && cached.isNotEmpty) {
 //         print('Using cached Android ID: $cached');
 //         return cached;
@@ -40,7 +43,7 @@
 //       final String? androidId = await androidIdPlugin.getId();
 
 //       if (androidId != null && androidId.isNotEmpty) {
-//         await prefs.setString(_androidIdKey, androidId);
+//         await prefs.setString('android_id', androidId);
 //         print('Fetched & saved Android ID: $androidId');
 //       } else {
 //         print('Android ID is null or empty');
@@ -52,10 +55,6 @@
 //     }
 //   }
 
-//   static Future<String?> getSavedAndroidId() async {
-//     final prefs = await SharedPreferences.getInstance();
-//     return prefs.getString(_androidIdKey);
-//   }
 //   static Future<String?> _getFirstSimMobileNumber() async {
 //     try {
 //       if (!Platform.isAndroid && !Platform.isIOS) return null;
@@ -112,6 +111,7 @@
 
 //     return null;
 //   }
+
 //   /// Login API + send phoneNumber (10 digits) + buildNumber + applicationVersion + androidId
 //   static Future<Map<String, dynamic>?> login(
 //     String username,
@@ -123,7 +123,6 @@
 //     final String? androidId = await _getAndroidId();
 
 //     try {
-//       // Send data to backend
 //       final Map<String, dynamic> body = {
 //         'username': username.trim(),
 //         'password': password.trim(),
@@ -134,55 +133,79 @@
 
 //       print('Login request body: $body');
 
-//       final response = await http.post(
-//         Uri.parse(_baseUrl),
-//         headers: {'Content-Type': 'application/json'},
-//         body: jsonEncode(body),
+//       final dio = DioClient().dio;
+//       final response = await dio.post(
+//         '${ApiConfig.baseUrl}/auth/login',
+//         data: body,
 //       );
+//       print('response $response');
 
-//       print(response.body);
-//       if (response.statusCode == 200) {
-//         final data = jsonDecode(response.body);
-//         final token = data['accessToken'];
-//         await TokenStorage.saveToken(token);
+//       if (response.statusCode == 200 || response.statusCode == 201) {
+//         final data = response.data as Map<String, dynamic>;
+//         final token = data['accessToken'] as String?;
+//         final refresh = data['refreshToken'] as String?;
 
-//         if (token != null) {
+//         if (token != null && token.isNotEmpty) {
+//           await TokenStorage.saveAccessToken(token);
+//           // final role = extractRole(token); //role
+//           // if (role != null) {
+//           //   final prefs = await SharedPreferences.getInstance();
+//           //   await prefs.setString("user_role", role);
+//           // }
+
 //           final prefs = await SharedPreferences.getInstance();
-//           await prefs.setString("accessToken", token);
+//           await prefs.setString('accessToken', token);
+
+//           if (refresh != null && refresh.isNotEmpty) {
+//             await TokenStorage.saveRefreshToken(refresh);
+//           }
 
 //           if (!JwtDecoder.isExpired(token)) {
 //             final decodedToken = JwtDecoder.decode(token);
 //             print('Decoded Token User ID: ${decodedToken['id']}');
+//             print('Decoded Token: ${decodedToken}');
 //             print('Token Expires At: ${JwtDecoder.getExpirationDate(token)}');
 //           }
 
-//           print('Token saved: $prefs.getString("accessToken")');
+//           print('Token saved: ${prefs.getString("accessToken")}');
 //         }
 //         return data;
 //       } else {
-//         print('Login failed: ${response.statusCode} ${response.body}');
-
+//         print('Login failed: ${response.statusCode} ${response.data}');
 //         String errorMessage = 'Invalid credentials or server error.';
 //         try {
-//           final errorData = jsonDecode(response.body);
-//           errorMessage =
-//               errorData['message'] ?? errorData['error'] ?? errorMessage;
+//           final errorData = response.data;
+//           if (errorData is Map &&
+//               (errorData['message'] != null || errorData['error'] != null)) {
+//             errorMessage =
+//                 errorData['message'] ?? errorData['error'] ?? errorMessage;
+//           } else if (errorData is String) {
+//             errorMessage = errorData;
+//           }
 //         } catch (_) {}
-
 //         return {'error': errorMessage};
 //       }
+//     } on DioException catch (e) {
+//       print('DioException during login: ${e.message}');
+//       String errMsg = 'Cannot connect to the server.';
+//       if (e.response != null) {
+//         try {
+//           final d = e.response!.data;
+//           if (d is Map && d['message'] != null)
+//             errMsg = d['message'];
+//           else if (d is String)
+//             errMsg = d;
+//         } catch (_) {}
+//       }
+//       return {'error': errMsg};
 //     } catch (e) {
 //       print('Error during login: $e');
-//       return {
-//         'error':
-//             'Cannot connect to the server. Check your connection or API URL.',
-//       };
+//       return {'error': 'Unexpected error during login.'};
 //     }
 //   }
 
 //   static Future<String?> getToken() async {
-//     final prefs = await SharedPreferences.getInstance();
-//     return prefs.getString(_tokenKey);
+//     return await TokenStorage.getAccessToken();
 //   }
 
 //   static Future<bool> isLoggedIn() async {
@@ -192,19 +215,31 @@
 //   }
 
 //   static Future<void> saveToken(String token) async {
-//     final prefs = await SharedPreferences.getInstance();
-//     await prefs.setString(_tokenKey, token);
+//     await TokenStorage.saveAccessToken(token);
 //   }
 
 //   static Future<void> logout() async {
+//     await TokenStorage.clearAll();
 //     final prefs = await SharedPreferences.getInstance();
-//     await prefs.remove(_tokenKey);
-//     await prefs.remove(_androidIdKey);
+//     await prefs.remove('android_id');
 //   }
 // }
 
-////Uper wala code sahi hai tested code hai.but http wala hai niche wala code Dio wala hai.
-///Using Dio.
+// String? extractRole(String token) {
+//   try {
+//     final decoded = JwtDecoder.decode(token);
+//     final role = decoded["roles"];
+//     if (role is String) return role;
+//     return null;
+//   } catch (e) {
+//     print("Role decode error: $e");
+//     return null;
+//   }
+// }
+
+//AWAITE REMOVED
+
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -220,8 +255,6 @@ import 'dio_client.dart';
 import 'token_store.dart';
 
 class AuthService {
-  // static const String _loginUrl = 'http://192.168.29.202:8080/v1/m/auth/login';
-  //static const String _tokenKey = 'auth_token';
   static PackageInfo? _packageInfo;
 
   static Future<void> _loadPackageInfo() async {
@@ -246,6 +279,7 @@ class AuthService {
         print('Using cached Android ID: $cached');
         return cached;
       }
+
       final androidIdPlugin = AndroidId();
       final String? androidId = await androidIdPlugin.getId();
 
@@ -262,8 +296,18 @@ class AuthService {
     }
   }
 
+  /// Get first SIM mobile number with caching & timeouts
   static Future<String?> _getFirstSimMobileNumber() async {
     try {
+      final prefs = await SharedPreferences.getInstance();
+
+      // 1) Try cached SIM number first (fast path)
+      final cached = prefs.getString('sim_phone_number');
+      if (cached != null && cached.isNotEmpty) {
+        print('Using cached SIM phone: $cached');
+        return cached;
+      }
+
       if (!Platform.isAndroid && !Platform.isIOS) return null;
 
       if (Platform.isAndroid) {
@@ -283,15 +327,24 @@ class AuthService {
         return null;
       }
 
-      // Try dual SIM info
+      // 2) Try dual SIM info with timeout
       try {
-        final List<SimCardInfo> allSimInfo = await SimCardManager.allSimInfo;
+        final List<SimCardInfo> allSimInfo = await SimCardManager.allSimInfo
+            .timeout(
+              const Duration(seconds: 2),
+              onTimeout: () {
+                print('allSimInfo timeout');
+                return <SimCardInfo>[];
+              },
+            );
+
         if (allSimInfo.isNotEmpty) {
           for (final sim in allSimInfo) {
             final String? num = sim.phoneNumber?.trim();
             if (num != null && num.isNotEmpty) {
               final cleaned = cleanMobileNumber(num);
               print('Using phone number from allSimInfo: $cleaned');
+              await prefs.setString('sim_phone_number', cleaned);
               return cleaned;
             }
           }
@@ -300,13 +353,21 @@ class AuthService {
         print('Error reading allSimInfo: $e');
       }
 
-      // Fallback primary SIM
+      // 3) Fallback: basic SIM info with timeout
       try {
-        final SimCardInfo? basic = await SimCardManager.basicSimInfo;
+        final SimCardInfo? basic = await SimCardManager.basicSimInfo.timeout(
+          const Duration(seconds: 2),
+          onTimeout: () {
+            print('basicSimInfo timeout');
+            return null;
+          },
+        );
+
         final String? num = basic?.phoneNumber?.trim();
         if (num != null && num.isNotEmpty) {
           final cleaned = cleanMobileNumber(num);
           print('Using phone number from basicSimInfo: $cleaned');
+          await prefs.setString('sim_phone_number', cleaned);
           return cleaned;
         }
       } catch (e) {
@@ -324,10 +385,14 @@ class AuthService {
     String username,
     String password,
   ) async {
-    await _loadPackageInfo();
+    // Run independent tasks in parallel
+    final simFuture = _getFirstSimMobileNumber();
+    final androidFuture = _getAndroidId();
+    final pkgFuture = _loadPackageInfo();
 
-    final String? firstSimMobile = await _getFirstSimMobileNumber();
-    final String? androidId = await _getAndroidId();
+    await pkgFuture; // just ensures _packageInfo is ready
+    final String? firstSimMobile = await simFuture;
+    final String? androidId = await androidFuture;
 
     try {
       final Map<String, dynamic> body = {
@@ -341,11 +406,13 @@ class AuthService {
       print('Login request body: $body');
 
       final dio = DioClient().dio;
-      final response = await dio.post(
-        '${ApiConfig.baseUrl}/auth/login',
-        data: body,
-      );
-      print('response $response');
+
+      // Add timeout to the login API call
+      final response = await dio
+          .post('${ApiConfig.baseUrl}/auth/login', data: body)
+          .timeout(const Duration(seconds: 10));
+
+      print('Login response: ${response.statusCode} ${response.data}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data as Map<String, dynamic>;
@@ -354,11 +421,6 @@ class AuthService {
 
         if (token != null && token.isNotEmpty) {
           await TokenStorage.saveAccessToken(token);
-          // final role = extractRole(token); //role
-          // if (role != null) {
-          //   final prefs = await SharedPreferences.getInstance();
-          //   await prefs.setString("user_role", role);
-          // }
 
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString('accessToken', token);
@@ -370,7 +432,7 @@ class AuthService {
           if (!JwtDecoder.isExpired(token)) {
             final decodedToken = JwtDecoder.decode(token);
             print('Decoded Token User ID: ${decodedToken['id']}');
-            print('Decoded Token: ${decodedToken}');
+            print('Decoded Token: $decodedToken');
             print('Token Expires At: ${JwtDecoder.getExpirationDate(token)}');
           }
 
@@ -398,13 +460,17 @@ class AuthService {
       if (e.response != null) {
         try {
           final d = e.response!.data;
-          if (d is Map && d['message'] != null)
+          if (d is Map && d['message'] != null) {
             errMsg = d['message'];
-          else if (d is String)
+          } else if (d is String) {
             errMsg = d;
+          }
         } catch (_) {}
       }
       return {'error': errMsg};
+    } on TimeoutException catch (_) {
+      print('Login request timed out');
+      return {'error': 'Login timed out. Please try again.'};
     } catch (e) {
       print('Error during login: $e');
       return {'error': 'Unexpected error during login.'};
@@ -429,6 +495,7 @@ class AuthService {
     await TokenStorage.clearAll();
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('android_id');
+    await prefs.remove('sim_phone_number');
   }
 }
 

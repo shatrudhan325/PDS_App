@@ -128,7 +128,7 @@
 //   }
 // }
 
-// // // // // Yaha Se Hai Updated Code
+// // // // // Updated Code
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 // import 'package:pds_app/core/routeconfig/auth_Controler.dart';
@@ -304,7 +304,6 @@ class _LoginPageState extends State<LoginPage> {
                         textInputAction: TextInputAction.done,
                         validator: _passwordValidator,
                         onFieldSubmitted: (_) {
-                          // Optionally submit when user presses done
                           if (!loading) handleLogin();
                         },
                         decoration: InputDecoration(

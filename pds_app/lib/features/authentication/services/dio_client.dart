@@ -1,23 +1,17 @@
-// lib/core/services/dio_client.dart
 import 'dart:async';
 import 'package:dio/dio.dart';
-// import 'package:shared_preferences/shared_preferences.dart';/
+import 'package:pds_app/core/apiConfig/config.dart';
 import 'token_store.dart';
 
-/// Singleton Dio client with auth interceptor + logging
 class DioClient {
   static final DioClient _instance = DioClient._internal();
   final Dio dio;
-
   factory DioClient() => _instance;
-
   DioClient._internal()
     : dio = Dio(
         BaseOptions(
           connectTimeout: const Duration(seconds: 20),
           receiveTimeout: const Duration(seconds: 20),
-          // set a baseUrl if most endpoints share it:
-          // baseUrl: 'http://192.168.29.202:8080/v1',
           headers: {'Content-Type': 'application/json'},
         ),
       ) {
@@ -58,11 +52,8 @@ class _AuthInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     final requestOptions = err.requestOptions;
-
-    // handle 401: try refresh + retry once
     if (err.response?.statusCode == 401 &&
         requestOptions.extra['retried'] != true) {
-      // If a refresh is already in progress, wait for it
       if (_refreshCompleter != null) {
         await _refreshCompleter!.future;
       } else {
@@ -72,7 +63,6 @@ class _AuthInterceptor extends Interceptor {
           _refreshCompleter!.complete();
           _refreshCompleter = null;
           if (!refreshed) {
-            // refresh failed -> forward original error
             return handler.next(err);
           }
         } catch (e) {
@@ -82,7 +72,6 @@ class _AuthInterceptor extends Interceptor {
         }
       }
 
-      // after refresh try retrying the original request with new token
       try {
         final newToken = await TokenStorage.getAccessToken();
         final opts = Options(
@@ -107,19 +96,14 @@ class _AuthInterceptor extends Interceptor {
         return handler.next(err);
       }
     }
-
-    // non-401 or already retried
     return handler.next(err);
   }
 
-  /// Call your refresh token endpoint here.
-  /// Returns true if refresh succeeded and saved new tokens.
   Future<bool> _performRefresh() async {
     try {
       final refreshToken = await TokenStorage.getRefreshToken();
       if (refreshToken == null || refreshToken.isEmpty) return false;
 
-      // use a Dio instance without this interceptor to avoid loops
       final plain = Dio(
         BaseOptions(
           connectTimeout: const Duration(seconds: 15),
@@ -128,8 +112,7 @@ class _AuthInterceptor extends Interceptor {
         ),
       );
 
-      // Adjust URL/payload to your API spec
-      const refreshUrl = 'http://192.168.29.202:8080/v1/m/auth/refresh';
+      const refreshUrl = '${ApiConfig.baseUrl}/auth/login';
 
       final response = await plain.post(
         refreshUrl,

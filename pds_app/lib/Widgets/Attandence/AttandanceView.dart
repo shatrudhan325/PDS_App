@@ -758,6 +758,7 @@ class AttendanceController extends GetxController {
   /// Handle check-in action (only once per day)
   Future<void> handleCheckIn() async {
     if (_isSending.value) return; // prevent double taps
+
     if (isFakeLocation.value) {
       Get.snackbar(
         'Check-in blocked',
@@ -770,7 +771,8 @@ class AttendanceController extends GetxController {
       return;
     }
 
-    if (lastLocation.value == null) {
+    final loc = lastLocation.value;
+    if (loc == null) {
       Get.snackbar(
         'Location missing',
         'Unable to get current location. Please try again.',
@@ -796,25 +798,44 @@ class AttendanceController extends GetxController {
 
     _isSending.value = true;
 
-    final record = AttendanceRecord(
-      checkInTime: now,
-      checkOutTime: null,
-      isCheckedIn: true,
-    );
+    // Call backend first. Only update local state if success.
+    final success = await _sendAttendanceToBackend(action: 'check_in');
 
-    attendanceRecord.value = record;
-    elapsedTime.value = record.getElapsedTime();
+    if (success) {
+      final record = AttendanceRecord(
+        checkInTime: now,
+        checkOutTime: null,
+        isCheckedIn: true,
+      );
 
-    await _saveAttendanceToStorage();
-    _scheduleMidnightReset();
+      attendanceRecord.value = record;
+      elapsedTime.value = record.getElapsedTime();
 
-    // Fire & forget backend call (you can await to show errors)
-    _sendAttendanceToBackend(action: 'check_in').whenComplete(() {
-      _isSending.value = false;
-    });
+      await _saveAttendanceToStorage();
+      _scheduleMidnightReset();
+
+      Get.snackbar(
+        'Check-in successful',
+        'You have checked in.',
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(12),
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } else {
+      Get.snackbar(
+        'Check-in failed',
+        'Unable to check in. Please try again.',
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(12),
+        backgroundColor: const Color(0xFFDC3545),
+        colorText: Colors.white,
+      );
+    }
+
+    _isSending.value = false;
   }
 
-  /// Handle check-out action (only for today's check-in)
   Future<void> handleCheckOut() async {
     if (_isSending.value) return;
     final currentRecord = attendanceRecord.value;
@@ -831,29 +852,61 @@ class AttendanceController extends GetxController {
       return;
     }
 
+    final loc = lastLocation.value;
+    if (loc == null) {
+      Get.snackbar(
+        'Location missing',
+        'Unable to get current location. Please try again.',
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(12),
+      );
+      return;
+    }
+
     _isSending.value = true;
 
-    final updated = currentRecord.copyWith(
-      checkOutTime: now,
-      isCheckedIn: false,
-    );
+    final success = await _sendAttendanceToBackend(action: 'check_out');
 
-    attendanceRecord.value = updated;
-    elapsedTime.value = updated.getElapsedTime();
+    if (success) {
+      final updated = currentRecord.copyWith(
+        checkOutTime: now,
+        isCheckedIn: false,
+      );
 
-    await _saveAttendanceToStorage();
+      attendanceRecord.value = updated;
+      elapsedTime.value = updated.getElapsedTime();
 
-    _sendAttendanceToBackend(action: 'check_out').whenComplete(() {
-      _isSending.value = false;
-    });
+      await _saveAttendanceToStorage();
+
+      Get.snackbar(
+        'Check-out successful',
+        'You have checked out.',
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(12),
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } else {
+      Get.snackbar(
+        'Check-out failed',
+        'Unable to check out. Please try again.',
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(12),
+        backgroundColor: const Color(0xFFDC3545),
+        colorText: Colors.white,
+      );
+    }
+
+    _isSending.value = false;
   }
 
-  Future<void> _sendAttendanceToBackend({required String action}) async {
+  /// Send attendance to backend. Returns true on success, false on any failure.
+  Future<bool> _sendAttendanceToBackend({required String action}) async {
     final loc = lastLocation.value;
 
     if (loc == null) {
       debugPrint('No location data available. Skipping API call.');
-      return;
+      return false;
     }
 
     const String apiUrl = '${ApiConfig.baseUrl}/attendance/mark_attendance';
@@ -885,25 +938,18 @@ class AttendanceController extends GetxController {
         body: jsonEncode(payload),
       );
 
+      debugPrint(
+        'Attendance API response: ${response.statusCode} ${response.body}',
+      );
+
       if (response.statusCode == 200 || response.statusCode == 201) {
-        debugPrint('Attendance saved successfully');
+        return true;
       } else {
-        debugPrint(
-          'Attendance API failed: ${response.statusCode} ${response.body}',
-        );
-        Get.snackbar(
-          'Server error',
-          'Unable to save attendance. Please try again.',
-          snackPosition: SnackPosition.BOTTOM,
-        );
+        return false;
       }
     } catch (e) {
       debugPrint('Attendance API error: $e');
-      Get.snackbar(
-        'Network error',
-        'Failed to connect to server.',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      return false;
     }
   }
 
@@ -941,7 +987,6 @@ class AttendanceTrackingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Ensure controller registered only once
     final AttendanceController controller =
         Get.isRegistered<AttendanceController>()
         ? Get.find<AttendanceController>()
@@ -952,8 +997,6 @@ class AttendanceTrackingScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
-
-      /// App Bar
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 1,
@@ -987,8 +1030,6 @@ class AttendanceTrackingScreen extends StatelessWidget {
           ),
         ],
       ),
-
-      /// Body
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(w * 0.04),
@@ -1036,8 +1077,6 @@ class AttendanceTrackingScreen extends StatelessWidget {
               Obx(() => _buildPrimaryActionCard(controller, h, w)),
 
               SizedBox(height: h * 0.03),
-
-              /// Today's Log Header
               Row(
                 children: [
                   const Icon(
@@ -1063,8 +1102,6 @@ class AttendanceTrackingScreen extends StatelessWidget {
               Obx(() => _buildLogHistoryCard(controller, h, w)),
 
               SizedBox(height: h * 0.03),
-
-              /// Footer - View Past Records
               Center(
                 child: TextButton(
                   onPressed: () {
