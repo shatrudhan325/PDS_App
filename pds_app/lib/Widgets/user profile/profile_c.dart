@@ -101,15 +101,11 @@ class ProfileMenu extends StatelessWidget {
     if (icon is String) {
       leading = SvgPicture.asset(
         icon as String,
-        colorFilter: const ColorFilter.mode(Color(0xFFFF7643), BlendMode.srcIn),
+        colorFilter: const ColorFilter.mode(Colors.blue, BlendMode.srcIn),
         width: 22,
       );
     } else if (icon is IconData) {
-      leading = Icon(
-        icon as IconData,
-        color: const Color.fromARGB(255, 33, 129, 174),
-        size: 22,
-      );
+      leading = Icon(icon as IconData, color: Colors.blue, size: 22);
     } else if (icon is Widget) {
       leading = icon as Widget;
     } else {
@@ -125,7 +121,7 @@ class ProfileMenu extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
-          backgroundColor: const Color(0xFFF5F6F9),
+          backgroundColor: Color(0xFFF5F6F9),
         ),
         onPressed: press,
         child: Row(

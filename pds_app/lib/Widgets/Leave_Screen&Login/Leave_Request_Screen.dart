@@ -65,7 +65,7 @@ class _LeaveRequestPageState extends State<LeaveRequestPage>
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
-              primary: Colors.blue,
+              primary: Color(0xFF3677F6),
               onPrimary: Colors.white,
               onSurface: Colors.black,
             ),
@@ -77,7 +77,7 @@ class _LeaveRequestPageState extends State<LeaveRequestPage>
 
     if (picked != null) {
       final int diff = picked.end.difference(picked.start).inDays;
-      if (diff != 1) {
+      if (diff != 1 & 0) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("You Can Select Maximum Two Day.")),
         );
@@ -173,6 +173,8 @@ class _LeaveRequestPageState extends State<LeaveRequestPage>
       appBar: AppBar(
         leading: const BackButton(),
         title: const Text("Create Leave"),
+        titleTextStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 21),
+        backgroundColor: const Color(0xFF3677F6),
         centerTitle: true,
         elevation: 1,
       ),
@@ -214,7 +216,7 @@ class _LeaveRequestPageState extends State<LeaveRequestPage>
           children: [
             Row(
               children: const [
-                Icon(Icons.assignment, color: Colors.blue, size: 22),
+                Icon(Icons.assignment, color: Color(0xFF3677F6), size: 22),
                 SizedBox(width: 8),
                 Text(
                   "Leave Request Form",
@@ -296,9 +298,7 @@ class _LeaveRequestPageState extends State<LeaveRequestPage>
             borderRadius: BorderRadius.circular(12),
           ),
           elevation: 4,
-          backgroundColor: _submitted
-              ? const Color.fromARGB(255, 243, 241, 241)
-              : const Color.fromARGB(255, 29, 53, 87),
+          backgroundColor: _submitted ? Colors.white : const Color(0xFF3677F6),
         ),
         onPressed: (_isSubmitting || _submitted) ? null : _submit,
         child: Text(
@@ -307,7 +307,11 @@ class _LeaveRequestPageState extends State<LeaveRequestPage>
               : _isSubmitting
               ? "Submitting..."
               : "Submit",
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          style: const TextStyle(
+            fontSize: 16,
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+          ),
         ),
       ),
     );
@@ -319,7 +323,7 @@ class _LeaveRequestPageState extends State<LeaveRequestPage>
       padding: const EdgeInsets.only(bottom: 6),
       child: Text(
         text,
-        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14.5),
+        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
       ),
     );
   }
@@ -328,7 +332,7 @@ class _LeaveRequestPageState extends State<LeaveRequestPage>
   InputDecoration _inputDecoration() {
     return InputDecoration(
       filled: true,
-      fillColor: Colors.grey.shade100,
+      fillColor: Colors.white,
       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),

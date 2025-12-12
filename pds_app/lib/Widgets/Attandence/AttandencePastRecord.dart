@@ -1,13 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pds_app/Widgets/Attandence/Attandence_History/attendance_db.dart';
+import 'package:pds_app/Widgets/Attandence/Attandence_History/attendance_history_record.dart';
 
-/// Past Records Screen - Display historical attendance data
-///
-/// Features:
-/// - Statistics summary (total days, hours, incomplete)
-/// - Search functionality
-/// - Filter by month and status
-/// - List of past attendance records
-/// - Material Design 3 UI
 class PastRecordsScreen extends StatefulWidget {
   const PastRecordsScreen({super.key});
 
@@ -22,63 +16,23 @@ class _PastRecordsScreenState extends State<PastRecordsScreen> {
   String _filterMonth = 'all';
   String _filterStatus = 'all';
 
+  bool _isLoading = true;
+
   @override
   void initState() {
     super.initState();
-    _allRecords = _generateMockRecords();
-    _filteredRecords = _allRecords;
+    _loadRecords();
   }
 
-  /// Generate mock attendance records for demonstration
-  List<AttendanceHistoryRecord> _generateMockRecords() {
-    final records = <AttendanceHistoryRecord>[];
-    final today = DateTime.now();
-
-    for (int i = 1; i <= 30; i++) {
-      final date = DateTime(today.year, today.month, today.day - i);
-
-      // Skip weekends
-      if (date.weekday == DateTime.saturday ||
-          date.weekday == DateTime.sunday) {
-        continue;
-      }
-
-      final checkIn = DateTime(
-        date.year,
-        date.month,
-        date.day,
-        9,
-        (i * 7) % 30,
-      );
-
-      // 90% of records have check-out
-      final hasCheckOut = (i * 3) % 10 != 0;
-      final checkOut = hasCheckOut
-          ? DateTime(date.year, date.month, date.day, 17, (i * 11) % 60)
-          : null;
-
-      final diff = hasCheckOut ? checkOut!.difference(checkIn) : Duration.zero;
-
-      final hours = diff.inHours;
-      final minutes = diff.inMinutes.remainder(60);
-
-      records.add(
-        AttendanceHistoryRecord(
-          id: 'record-$i',
-          date: date,
-          checkInTime: checkIn,
-          checkOutTime: checkOut,
-          totalHours: hasCheckOut ? '${hours}h ${minutes}m' : 'Incomplete',
-          status: hasCheckOut ? RecordStatus.complete : RecordStatus.incomplete,
-          location: (i % 3 == 0) ? 'Remote' : 'Office HQ',
-        ),
-      );
-    }
-
-    return records;
+  Future<void> _loadRecords() async {
+    final records = await AttendanceDb.instance.getAllRecords();
+    setState(() {
+      _allRecords = records;
+      _filteredRecords = records;
+      _isLoading = false;
+    });
   }
 
-  /// Apply search and filters to records
   void _applyFilters() {
     setState(() {
       _filteredRecords = _allRecords.where((record) {
@@ -168,6 +122,7 @@ class _PastRecordsScreenState extends State<PastRecordsScreen> {
     return _filteredRecords
         .where((r) => r.status == RecordStatus.complete)
         .fold(0, (sum, record) {
+          // record.totalHours is like "7h 30m" or "Incomplete"
           final hours = int.tryParse(record.totalHours.split('h')[0]) ?? 0;
           return sum + hours;
         });
@@ -183,10 +138,13 @@ class _PastRecordsScreenState extends State<PastRecordsScreen> {
 
       /// App Bar
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Color(0xFF1A57D8),
         elevation: 1,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF030213)),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Color.fromARGB(255, 255, 255, 255),
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: const Text(
@@ -194,154 +152,172 @@ class _PastRecordsScreenState extends State<PastRecordsScreen> {
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w500,
-            color: Color(0xFF030213),
+            color: Color.fromARGB(255, 253, 253, 253),
           ),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.refresh,
+              color: Color.fromARGB(255, 253, 253, 254),
+            ),
+            onPressed: () => _loadRecords(),
+          ),
+        ],
       ),
 
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              /// Statistics Cards
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildStatCard(
-                      icon: Icons.calendar_today,
-                      color: const Color(0xFF007BFF),
-                      value: '$_totalDays',
-                      label: 'Days',
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildStatCard(
-                      icon: Icons.access_time,
-                      color: const Color(0xFF28A745),
-                      value: '${_totalHours}h',
-                      label: 'Hours',
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildStatCard(
-                      icon: Icons.cancel,
-                      color: const Color(0xFFFFC107),
-                      value: '$_incompleteDays',
-                      label: 'Incomplete',
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 16),
-
-              /// Search and Filters Card
-              Card(
-                elevation: 3,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      /// Search Bar
-                      TextField(
-                        onChanged: (value) {
-                          _searchQuery = value;
-                          _applyFilters();
-                        },
-                        decoration: InputDecoration(
-                          hintText: 'Search by date or location...',
-                          prefixIcon: const Icon(
-                            Icons.search,
-                            color: Color(0xFF717182),
-                          ),
-                          filled: true,
-                          fillColor: const Color(0xFFF8F9FA),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            vertical: 12,
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    /// Statistics Cards
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildStatCard(
+                            icon: Icons.calendar_today,
+                            color: const Color(0xFF007BFF),
+                            value: '$_totalDays',
+                            label: 'Days',
                           ),
                         ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _buildStatCard(
+                            icon: Icons.access_time,
+                            color: const Color(0xFF28A745),
+                            value: '${_totalHours}h',
+                            label: 'Hours',
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _buildStatCard(
+                            icon: Icons.cancel,
+                            color: const Color(0xFFFFC107),
+                            value: '$_incompleteDays',
+                            label: 'Incomplete',
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    /// Search and Filters Card
+                    Card(
+                      elevation: 3,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
-
-                      const SizedBox(height: 12),
-
-                      /// Filter Dropdowns
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _buildFilterDropdown(
-                              value: _filterMonth,
-                              items: ['all', ..._getUniqueMonths()],
-                              labels: {'all': 'All Months'},
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            /// Search Bar
+                            TextField(
                               onChanged: (value) {
-                                setState(() => _filterMonth = value!);
+                                _searchQuery = value;
                                 _applyFilters();
                               },
+                              decoration: InputDecoration(
+                                hintText: 'Search by date or location...',
+                                prefixIcon: const Icon(
+                                  Icons.search,
+                                  color: Color(0xFF717182),
+                                ),
+                                filled: true,
+                                fillColor: const Color(0xFFF8F9FA),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide.none,
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: _buildFilterDropdown(
-                              value: _filterStatus,
-                              items: const ['all', 'complete', 'incomplete'],
-                              labels: const {
-                                'all': 'All Status',
-                                'complete': 'Complete',
-                                'incomplete': 'Incomplete',
-                              },
-                              onChanged: (value) {
-                                setState(() => _filterStatus = value!);
-                                _applyFilters();
-                              },
+
+                            const SizedBox(height: 12),
+
+                            /// Filter Dropdowns
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildFilterDropdown(
+                                    value: _filterMonth,
+                                    items: ['all', ..._getUniqueMonths()],
+                                    labels: const {'all': 'All Months'},
+                                    onChanged: (value) {
+                                      setState(() => _filterMonth = value!);
+                                      _applyFilters();
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: _buildFilterDropdown(
+                                    value: _filterStatus,
+                                    items: const [
+                                      'all',
+                                      'complete',
+                                      'incomplete',
+                                    ],
+                                    labels: const {
+                                      'all': 'All Status',
+                                      'complete': 'Complete',
+                                      'incomplete': 'Incomplete',
+                                    },
+                                    onChanged: (value) {
+                                      setState(() => _filterStatus = value!);
+                                      _applyFilters();
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    /// Records Count
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 4,
+                        vertical: 8,
+                      ),
+                      child: Text(
+                        'Showing ${_filteredRecords.length} record${_filteredRecords.length != 1 ? 's' : ''}',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Color(0xFF717182),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    /// Records List
+                    if (_filteredRecords.isEmpty)
+                      _buildEmptyState()
+                    else
+                      ..._filteredRecords.map(
+                        (record) => Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: _buildRecordCard(record),
+                        ),
+                      ),
+                  ],
                 ),
               ),
-
-              const SizedBox(height: 16),
-
-              /// Records Count
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-                child: Text(
-                  'Showing ${_filteredRecords.length} record${_filteredRecords.length != 1 ? 's' : ''}',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF717182),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 8),
-
-              /// Records List
-              if (_filteredRecords.isEmpty)
-                _buildEmptyState()
-              else
-                ..._filteredRecords.map(
-                  (record) => Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: _buildRecordCard(record),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 
@@ -650,26 +626,3 @@ class _PastRecordsScreenState extends State<PastRecordsScreen> {
     );
   }
 }
-
-/// Extended attendance record model for history
-class AttendanceHistoryRecord {
-  final String id;
-  final DateTime date;
-  final DateTime checkInTime;
-  final DateTime? checkOutTime;
-  final String totalHours;
-  final RecordStatus status;
-  final String location;
-
-  AttendanceHistoryRecord({
-    required this.id,
-    required this.date,
-    required this.checkInTime,
-    this.checkOutTime,
-    required this.totalHours,
-    required this.status,
-    required this.location,
-  });
-}
-
-enum RecordStatus { complete, incomplete }

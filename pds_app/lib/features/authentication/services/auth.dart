@@ -256,7 +256,6 @@ import 'token_store.dart';
 
 class AuthService {
   static PackageInfo? _packageInfo;
-
   static Future<void> _loadPackageInfo() async {
     if (_packageInfo == null) {
       _packageInfo = await PackageInfo.fromPlatform();
